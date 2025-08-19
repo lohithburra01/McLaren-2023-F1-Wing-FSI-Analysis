@@ -1,0 +1,92 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  11
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      snappyHexMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+castellatedMesh true;
+snap            true;
+addLayers       false;
+
+geometry
+{
+    mclaren_2023_original.stl
+    {
+        type triSurfaceMesh;
+        name mclarenWing;
+    }
+};
+
+castellatedMeshControls
+{
+    maxLocalCells 1000000;
+    maxGlobalCells 2000000;
+    minRefinementCells 10;
+    maxLoadUnbalance 0.10;
+    nCellsBetweenLevels 2;
+
+    features ();
+
+    refinementSurfaces
+    {
+        mclarenWing
+        {
+            level (2 3); // Conservative for stability
+            patchInfo { type wall; }
+        }
+    }
+
+    resolveFeatureAngle 30;
+
+    refinementRegions {};
+
+    locationInMesh (-2 0 0); // Point in fluid domain
+
+    allowFreeStandingZoneFaces true;
+}
+
+snapControls
+{
+    nSmoothPatch 3;
+    tolerance 4.0;
+    nSolveIter 30;
+    nRelaxIter 5;
+}
+
+addLayersControls
+{
+    relativeSizes true;
+    layers {};
+}
+
+meshQualityControls
+{
+    maxNonOrtho 65;
+    maxBoundarySkewness 20;
+    maxInternalSkewness 4;
+    maxConcave 80;
+    minVol 1e-13;
+    minTetQuality 1e-9;
+    minArea -1;
+    minTwist 0.02;
+    minDeterminant 0.001;
+    minFaceWeight 0.02;
+    minVolRatio 0.01;
+    minTriangleTwist -1;
+    nSmoothScale 4;
+    errorReduction 0.75;
+}
+
+debug 0;
+mergeTolerance 1e-6;
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

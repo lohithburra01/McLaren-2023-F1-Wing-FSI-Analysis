@@ -1,0 +1,248 @@
+# McLaren 2023 F1 Front Wing FSI Analysis
+# Git ignore patterns for CFD/FEA project
+
+# =================================
+# OpenFOAM Files
+# =================================
+
+# Time directories (simulation results)
+[0-9]*
+[0-9]*.[0-9]*
+constant/polyMesh/
+processor*/
+
+# Large result files
+*.foam
+postProcessing/
+logs/
+*.log
+
+# Mesh files (can be regenerated)
+blockMesh.log
+snappyHexMesh.log
+constant/triSurface/*.eMesh
+constant/triSurface/*.obj
+
+# Solver logs
+log.*
+residuals.*
+
+# =================================
+# CalculiX Files  
+# =================================
+
+# CalculiX result files
+*.frd
+*.dat
+*.sta
+*.cvg
+*.12d
+
+# Large mesh files
+*.unv
+*.med
+*.msh
+
+# =================================
+# Large Data Files
+# =================================
+
+# VTK files (can be large)
+*.vtk
+*.vtu
+*.vtp
+
+# Animation files
+*.mp4
+*.avi
+*.gif
+results/animations/
+
+# Large plot files
+*.eps
+*.pdf
+results/plots/*.png
+results/plots/*.jpg
+
+# =================================
+# Python
+# =================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# =================================
+# IDE and Editor Files
+# =================================
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+
+# Sublime Text
+*.sublime-*
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# =================================
+# Operating System Files
+# =================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.nfs*
+
+# =================================
+# Temporary Files
+# =================================
+
+# General temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.orig
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+
+# =================================
+# Project Specific
+# =================================
+
+# Configuration overrides
+config/local.yaml
+config/cluster_*.yaml
+
+# Temporary geometry files
+geometry/temp_*
+geometry/*.step.bak
+
+# Large documentation files
+docs/literature/*.pdf
+docs/images/high_res/
+
+# Validation data (might be proprietary)
+validation/proprietary_data/
+
+# Results that are too large for git
+results/raw_data/
+results/backup/
+
+# Cluster job files
+*.job
+*.sh.o*
+*.sh.e*
+slurm-*
+
+# =================================
+# Keep These Files (Explicitly)
+# =================================
+
+# Keep essential configuration
+!config/default.yaml
+!config/quick_test.yaml
+
+# Keep sample/template files
+!geometry/README.md
+!results/README.md
+!validation/README.md
+
+# Keep small documentation images
+!docs/images/*.png
+!docs/images/*.jpg
+!docs/images/*.svg
+
+# Keep essential scripts
+!scripts/*.py
+!scripts/utils/*.py
+
+# Keep small reference data
+!validation/experimental_data.csv
+!validation/literature_comparison.md
+
+# =================================
+# Git LFS Files (Large File Storage)
+# =================================
+
+# If using Git LFS, track large files here
+# *.stl filter=lfs diff=lfs merge=lfs -text
+# *.vtk filter=lfs diff=lfs merge=lfs -text
+# *.mp4 filter=lfs diff=lfs merge=lfs -text

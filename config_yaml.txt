@@ -1,0 +1,219 @@
+# McLaren 2023 F1 Front Wing FSI Analysis Configuration
+# Based on realistic F1 parameters and proven OpenFOAM methodology
+
+project:
+  name: "McLaren 2023 Front Wing FSI Analysis"
+  version: "1.0"
+  description: "Comparative analysis of rigid vs deformed wing aerodynamics"
+
+# Flow conditions for 350 km/h analysis
+flow_conditions:
+  velocity: 97.22  # m/s (350 km/h)
+  mach_number: 0.284  # High-speed compressible regime
+  pressure: 101325  # Pa (sea level)
+  temperature: 288.15  # K (15°C)
+  density: 1.225  # kg/m³
+  viscosity: 1.5e-5  # m²/s kinematic viscosity
+  
+# CFD simulation parameters
+cfd:
+  solver: "rhoCentralFoam"  # Compressible density-based solver
+  
+  mesh:
+    refinement_level: [2, 3]  # Conservative for stability (from PDF)
+    boundary_layers: false    # Initially false for stability
+    y_plus_target: 30
+    domain_size:
+      x_min: -3.0  # Inlet at X=-3 (from PDF methodology)
+      x_max: 6.0   # Outlet at X=+6
+      y_min: -2.5  # Sides
+      y_max: 2.5
+      z_min: -2.0  # Bottom
+      z_max: 3.0   # Top
+    cells: [90, 50, 50]  # Approximately 225,000 cells (from PDF)
+    
+  turbulence:
+    model: "kOmegaSST"
+    intensity: 0.05
+    length_scale: 0.1
+    
+  solver_settings:
+    max_iterations: 2000
+    convergence_criteria:
+      velocity: 1e-6
+      pressure: 1e-6
+      turbulence: 1e-8
+    courant_number: 0.5
+    time_step: 1e-6
+    end_time: 1.0
+    write_interval: 0.1
+    
+  boundary_conditions:
+    inlet:
+      type: "fixedValue"
+      velocity: [97.22, 0, 0]  # X-direction flow (from PDF)
+      pressure: "zeroGradient"
+      temperature: 288.15
+    outlet:
+      type: "zeroGradient"
+      velocity: "zeroGradient"
+      pressure: "fixedValue"
+      value: 101325
+    walls:
+      type: "noSlip"
+      velocity: [0, 0, 0]
+      pressure: "zeroGradient"
+    wing_surface:
+      type: "noSlip"
+      velocity: [0, 0, 0]
+      pressure: "zeroGradient"
+
+# Structural analysis parameters
+fea:
+  solver: "CalculiX"
+  
+  materials:
+    carbon_fiber:
+      density: 1600  # kg/m³
+      youngs_modulus: 70e9  # Pa (70 GPa)
+      poissons_ratio: 0.3
+      ultimate_strength: 600e6  # Pa (600 MPa)
+      safety_factor: 2.0
+      
+  boundary_conditions:
+    fixed_supports:
+      - location: "wing_root"
+        type: "fixed"
+        description: "Wing mounting points to chassis"
+        
+  aerodynamic_loads:
+    # Realistic F1 front wing loads at 350 km/h
+    pressure_distribution:
+      suction_side: -15000  # Pa (strong suction)
+      pressure_side: 5000   # Pa (mild pressure)
+    point_loads:
+      downforce_total: 2500  # N (realistic F1 front wing)
+      drag_total: 500        # N
+      
+  mesh_settings:
+    element_type: "C3D10"  # 10-node tetrahedral
+    element_size: 0.01     # m (1 cm)
+    refinement_zones:
+      - location: "wing_tips"
+        size_factor: 0.5
+      - location: "mounting_points"
+        size_factor: 0.3
+
+# Post-processing configuration
+post_processing:
+  streamlines:
+    # Based on proven methodology from PDF
+    seed_points:
+      count: 101  # 100+ requirement met
+      x_location: -2.0  # Upstream of geometry
+      y_range: [-2.0, 2.0]  # Perpendicular to flow
+      z_location: -0.01     # Constant plane
+    tracking:
+      max_steps: 10000
+      step_size: 0.001
+      life_time: 1000
+      track_length: 5.0
+    output_format: "vtk"  # For Blender/ParaView
+    
+  force_calculation:
+    surfaces: ["wing_surface"]
+    coefficients:
+      reference_area: 0.8  # m² (realistic F1 front wing area)
+      reference_length: 1.8  # m (wing span)
+      moment_center: [0, 0, 0]
+      
+  flow_visualization:
+    pressure_contours: true
+    velocity_streamlines: true
+    vorticity_iso_surfaces: true
+    mach_number_contours: true  # For compressible flow
+    
+# Comparison analysis
+comparison:
+  metrics:
+    - "downforce_coefficient"
+    - "drag_coefficient"
+    - "lift_to_drag_ratio"
+    - "pressure_recovery"
+    - "wake_characteristics"
+    
+  tolerance:
+    convergence: 1e-4
+    force_balance: 1e-3
+    
+  visualization:
+    side_by_side_plots: true
+    difference_contours: true
+    percentage_change_plots: true
+    animation_export: true
+
+# Output configuration
+output:
+  results_directory: "results"
+  
+  plots:
+    format: "png"
+    dpi: 300
+    style: "publication"
+    
+  animations:
+    format: "mp4"
+    fps: 30
+    quality: "high"
+    
+  reports:
+    generate_pdf: true
+    include_methodology: true
+    include_validation: true
+    
+# Validation and verification
+validation:
+  mesh_independence:
+    refinement_levels: [1, 2, 3, 4]
+    convergence_criteria: 0.02  # 2% change acceptable
+    
+  time_step_independence:
+    time_steps: [1e-6, 5e-7, 1e-7]
+    convergence_criteria: 0.01
+    
+  experimental_comparison:
+    reference_data: "validation/experimental_data.csv"
+    acceptable_error: 0.15  # 15% error acceptable
+    
+# Performance optimization
+performance:
+  parallel:
+    enable: true
+    processors: 8
+    decomposition_method: "scotch"
+    
+  memory:
+    max_memory_gb: 16
+    swap_usage: false
+    
+  storage:
+    compress_results: true
+    cleanup_intermediate: false
+    backup_critical: true
+
+# Quality assurance
+quality:
+  mesh_checks:
+    orthogonality: 65
+    skewness: 4
+    aspect_ratio: 1000
+    
+  convergence_monitoring:
+    residual_plots: true
+    force_monitoring: true
+    mass_conservation: true
+    
+  error_handling:
+    auto_recovery: true
+    checkpoint_frequency: 100  # iterations
+    max_retries: 3
