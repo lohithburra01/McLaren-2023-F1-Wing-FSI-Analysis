@@ -1,0 +1,34 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2112                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      pathlines;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+type            pathlines;
+libs            ("libfieldFunctionObjects.so");
+
+seedSampleSet
+{
+    type        uniform;
+    axis        xy;
+    start       (-0.5 -0.5 -0.01);
+    end         (1.5   0.5 -0.01);
+    nPoints     (30 20 1);
+}
+
+trackLength     1.5;
+nSubCycle       1;
+fields          (U);
+setFormat       vtk;
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

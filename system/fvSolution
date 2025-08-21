@@ -1,0 +1,126 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvSolution;
+}
+
+solvers
+{
+    p
+    {
+        solver GAMG;
+        tolerance 1e-06;
+        relTol 0.1;
+        smoother GaussSeidel;
+    }
+    
+    pFinal
+    {
+        solver GAMG;
+        tolerance 1e-06;
+        relTol 0;
+        smoother GaussSeidel;
+    }
+    
+    U
+    {
+        solver smoothSolver;
+        smoother symGaussSeidel;
+        tolerance 1e-05;
+        relTol 0;
+    }
+    
+    UFinal
+    {
+        solver smoothSolver;
+        smoother symGaussSeidel;
+        tolerance 1e-05;
+        relTol 0;
+    }
+    
+    k
+    {
+        solver smoothSolver;
+        smoother symGaussSeidel;
+        tolerance 1e-08;
+        relTol 0;
+    }
+    
+    kFinal
+    {
+        solver smoothSolver;
+        smoother symGaussSeidel;
+        tolerance 1e-08;
+        relTol 0;
+    }
+    
+    omega
+    {
+        solver smoothSolver;
+        smoother symGaussSeidel;
+        tolerance 1e-08;
+        relTol 0;
+    }
+    
+    omegaFinal
+    {
+        solver smoothSolver;
+        smoother symGaussSeidel;
+        tolerance 1e-08;
+        relTol 0;
+    }
+    
+    nut
+    {
+        solver smoothSolver;
+        smoother symGaussSeidel;
+        tolerance 1e-08;
+        relTol 0;
+    }
+    
+    nutFinal
+    {
+        solver smoothSolver;
+        smoother symGaussSeidel;
+        tolerance 1e-08;
+        relTol 0;
+    }
+    
+    Phi
+    {
+        solver GAMG;
+        tolerance 1e-06;
+        relTol 0.1;
+        smoother GaussSeidel;
+    }
+}
+
+potentialFlow
+{
+    nNonOrthogonalCorrectors 10;
+}
+
+PIMPLE
+{
+    nOuterCorrectors 2;
+    nCorrectors 1;
+    nNonOrthogonalCorrectors 0;
+    pRefCell 0;
+    pRefValue 0;
+}
+
+relaxationFactors
+{
+    fields
+    {
+        p 0.3;
+    }
+    equations
+    {
+        U 0.5;
+        k 0.7;
+        omega 0.7;
+    }
+}
